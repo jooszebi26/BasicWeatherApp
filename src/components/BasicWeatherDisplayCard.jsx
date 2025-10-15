@@ -1,21 +1,33 @@
-function BasicWeatherCard({ weather }) {
-  if (!weather) return null; // vagy egy skeleton
-
-  const { city, tempC, conditionText, iconUrl, localtime } = weather;
-
+function BasicWeatherCard({ weather, inputCity, onCityChange, onSearch, loading, error }) {
   return (
     <div className="weather-card">
-      <div className="temperature">{Math.round(tempC)}°C</div>
       <div className="location">
-        <p>{city}</p>
-        <p>{localtime}</p>
+        <label htmlFor="city">Search City </label>
+        <input
+          id="city"
+          value={inputCity}
+          onChange={(e) => onCityChange(e.target.value)}
+          placeholder="Pl. Debrecen"
+        />
+        <button onClick={onSearch} disabled={loading || inputCity.trim().length < 2}>
+          {loading ? "Searching..." : "Search"}
+        </button>
       </div>
-      <div className="weather-type">
-        <img src={iconUrl} alt={conditionText} width="64" height="64" />
-        <p>{conditionText}</p>
-      </div>
+
+      {error && <p role="alert" style={{ color: "crimson" }}>{error}</p>}
+
+      {/* Csak az időjárás rész feltételes */}
+      {weather && (
+        <>
+          <div className="temperature">{Math.round(weather.tempC)}°C</div>
+          <div className="weather-type">
+            <img src={weather.iconUrl} alt={weather.conditionText} width="64" height="64" />
+            <p>{weather.conditionText}</p>
+          </div>
+          <p>{weather.localtime}</p>
+        </>
+      )}
     </div>
   );
 }
-
-export default BasicWeatherCard
+export default BasicWeatherCard;
